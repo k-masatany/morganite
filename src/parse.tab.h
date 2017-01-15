@@ -45,13 +45,25 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    INTEGER = 258,
-    DOUBLE = 259,
-    CH_NL = 260,
-    OP_ADD = 261,
-    OP_SUB = 262,
-    OP_MUL = 263,
-    OP_DIV = 264
+    FAT_ARROW = 258,
+    LIT_BYTE = 259,
+    LIT_CHAR = 260,
+    LIT_INTEGER = 261,
+    LIT_FLOAT = 262,
+    LIT_STR = 263,
+    TRUE = 264,
+    FALSE = 265,
+    IDENT = 266,
+    OP_PLUSE = 267,
+    OP_MINUS = 268,
+    OP_MULTI = 269,
+    OP_DIVIS = 270,
+    OP_AND = 271,
+    OP_OR = 272,
+    OP_XOR = 273,
+    OP_NOT = 274,
+    OP_BIND = 275,
+    OP_PRINT = 276
   };
 #endif
 
@@ -60,12 +72,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "parse.y" /* yacc.c:1909  */
+#line 26 "parse.y" /* yacc.c:1909  */
 
-    int     int_value;
-    double  double_value;
+    struct node* nd;
 
-#line 69 "parse.tab.h" /* yacc.c:1909  */
+#line 80 "parse.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

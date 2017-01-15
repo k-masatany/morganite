@@ -5,8 +5,16 @@
 */
 %{
 #include <stdio.h>
-#include <stdbool.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include "node.h"
 #define YYDEBUG 1
+
+extern void print(const char* format, ...);
+extern struct node *mk_node(char const *name, int n, ...);
+extern struct node *mk_atom(char *name);
+extern char *yytext;
+extern struct node *nodes;
 
 static void yyerror(const char *s)
 {
@@ -16,58 +24,54 @@ static void yyerror(const char *s)
 %}
 
 %union {
-    int     int_value;
-    double  double_value;
-	bool	boolean_value;
+    struct node* nd;
 }
 
-%type <double_value> expr number
-%type <boolean_value> boolexpr
-%token <int_value> INTEGER
-%token <double_value> DOUBLE
-%token <boolean_value> BOOLEAN
-%token newline
+%type  <nd> statement expr ident lit str
+%token FAT_ARROW
+%token LIT_BYTE
+%token LIT_CHAR
+%token LIT_INTEGER
+%token LIT_FLOAT
+%token LIT_STR
+%token TRUE
+%token FALSE
+%token IDENT
 
-%left	op_add op_sub
-%left	op_mul op_div
-%left	op_not
-%left	op_and op_or op_nand op_nor op_xor
-%right	op_bond
+%left	OP_PLUSE OP_MINUS
+%left	OP_MULTI OP_DIVIS
+%left	OP_AND OP_OR OP_XOR
+%left	OP_NOT
+%right  OP_BIND
+
+%right  OP_PRINT
 
 %%
 program     :   statement
             |   program statement
             ;
 
-statement   :   expr newline { fprintf(stdout, "%g\n", $1); }
-			|   boolexpr newline { fprintf(stdout, "%d\n", $1); }
+statement   :   expr
+            |   OP_PRINT lit    { $$ = printf("nodes %s\n", nodes->name); }
             ;
 
-expr        :   number
-            |   "(" expr ")"
-            |   expr op_add expr    { $$ = $1 + $3; }
-            |   expr op_sub expr    { $$ = $1 - $3; }
-            |   expr op_mul expr    { $$ = $1 * $3; }
-            |   expr op_div expr    { $$ = $1 / $3; }
+expr        :   lit
+            |   ident
+            |   ident OP_BIND expr    { $$ = mk_node("test", 2, $1, $3); }
             ;
 
-boolexpr	:	BOOLEAN
-			|   op_not boolexpr   		{ $$ = !$2; }
-            |   boolexpr op_and boolexpr    { $$ = $1 && $3; }
-            |   boolexpr op_or boolexpr     { $$ = $1 || $3; }
-            |   boolexpr op_nand boolexpr   { $$ = !($1 && $3); }
-            |   boolexpr op_nor boolexpr    { $$ = !($1 || $3); }
-            |   boolexpr op_xor boolexpr    { $$ = $1 ^ $3; }
+ident       : IDENT             { $$ = mk_node("ident", 1, mk_atom(yytext)); }
             ;
 
-number      :   INTEGER {$$ = (double)$1; }
-            |   DOUBLE
+lit         : LIT_BYTE          { $$ = mk_node("LitByte", 1, mk_atom(yytext)); }
+            | LIT_CHAR          { $$ = mk_node("LitChar", 1, mk_atom(yytext)); }
+            | LIT_INTEGER       { $$ = mk_node("LitInteger", 1, mk_atom(yytext)); }
+            | LIT_FLOAT         { $$ = mk_node("LitFloat", 1, mk_atom(yytext)); }
+            | TRUE              { $$ = mk_node("LitBool", 1, mk_atom(yytext)); }
+            | FALSE             { $$ = mk_node("LitBool", 1, mk_atom(yytext)); }
+            | str
+            ;
+
+str         : LIT_STR           { $$ = mk_node("LitStr", 1, mk_atom(yytext), mk_atom("CookedStr")); }
             ;
 %%
-
-int main(void)
-{
-    yyparse();
-    printf("See you!!");
-    return 0;
-}

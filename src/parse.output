@@ -1,3 +1,16 @@
+Terminals unused in grammar
+
+   FAT_ARROW
+   OP_PLUSE
+   OP_MINUS
+   OP_MULTI
+   OP_DIVIS
+   OP_AND
+   OP_OR
+   OP_XOR
+   OP_NOT
+
+
 文法
 
     0 $accept: program $end
@@ -5,268 +18,266 @@
     1 program: statement
     2        | program statement
 
-    3 statement: expr CH_NL
+    3 statement: expr
+    4          | OP_PRINT lit
 
-    4 expr: number
-    5     | "(" expr ")"
-    6     | expr OP_ADD expr
-    7     | expr OP_SUB expr
-    8     | expr OP_MUL expr
-    9     | expr OP_DIV expr
+    5 expr: lit
+    6     | ident
+    7     | ident OP_BIND expr
 
-   10 number: INTEGER
-   11       | DOUBLE
+    8 ident: IDENT
+
+    9 lit: LIT_BYTE
+   10    | LIT_CHAR
+   11    | LIT_INTEGER
+   12    | LIT_FLOAT
+   13    | TRUE
+   14    | FALSE
+   15    | str
+
+   16 str: LIT_STR
 
 
 出現位置の規則による終端
 
 $end (0) 0
 error (256)
-INTEGER (258) 10
-DOUBLE (259) 11
-CH_NL (260) 3
-OP_ADD (261) 6
-OP_SUB (262) 7
-OP_MUL (263) 8
-OP_DIV (264) 9
-"(" (265) 5
-")" (266) 5
+FAT_ARROW (258)
+LIT_BYTE (259) 9
+LIT_CHAR (260) 10
+LIT_INTEGER (261) 11
+LIT_FLOAT (262) 12
+LIT_STR (263) 16
+TRUE (264) 13
+FALSE (265) 14
+IDENT (266) 8
+OP_PLUSE (267)
+OP_MINUS (268)
+OP_MULTI (269)
+OP_DIVIS (270)
+OP_AND (271)
+OP_OR (272)
+OP_XOR (273)
+OP_NOT (274)
+OP_BIND (275) 7
+OP_PRINT (276) 4
 
 
 出現位置の規則による非終端
 
-$accept (12)
+$accept (22)
     左辺: 0
-program (13)
+program (23)
     左辺: 1 2, 右辺: 0 2
-statement (14)
-    左辺: 3, 右辺: 1 2
-expr (15)
-    左辺: 4 5 6 7 8 9, 右辺: 3 5 6 7 8 9
-number (16)
-    左辺: 10 11, 右辺: 4
+statement (24)
+    左辺: 3 4, 右辺: 1 2
+expr (25)
+    左辺: 5 6 7, 右辺: 3 7
+ident (26)
+    左辺: 8, 右辺: 6 7
+lit (27)
+    左辺: 9 10 11 12 13 14 15, 右辺: 4 5
+str (28)
+    左辺: 16, 右辺: 15
 
 
 State 0
 
     0 $accept: . program $end
 
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
+    LIT_BYTE     shift, and go to state 1
+    LIT_CHAR     shift, and go to state 2
+    LIT_INTEGER  shift, and go to state 3
+    LIT_FLOAT    shift, and go to state 4
+    LIT_STR      shift, and go to state 5
+    TRUE         shift, and go to state 6
+    FALSE        shift, and go to state 7
+    IDENT        shift, and go to state 8
+    OP_PRINT     shift, and go to state 9
 
-    program    go to state 4
-    statement  go to state 5
-    expr       go to state 6
-    number     go to state 7
+    program    go to state 10
+    statement  go to state 11
+    expr       go to state 12
+    ident      go to state 13
+    lit        go to state 14
+    str        go to state 15
 
 
 State 1
 
-   10 number: INTEGER .
+    9 lit: LIT_BYTE .
 
-    $default  reduce using rule 10 (number)
+    $default  reduce using rule 9 (lit)
 
 
 State 2
 
-   11 number: DOUBLE .
+   10 lit: LIT_CHAR .
 
-    $default  reduce using rule 11 (number)
+    $default  reduce using rule 10 (lit)
 
 
 State 3
 
-    5 expr: "(" . expr ")"
+   11 lit: LIT_INTEGER .
 
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
-
-    expr    go to state 8
-    number  go to state 7
+    $default  reduce using rule 11 (lit)
 
 
 State 4
 
-    0 $accept: program . $end
-    2 program: program . statement
+   12 lit: LIT_FLOAT .
 
-    $end     shift, and go to state 9
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
-
-    statement  go to state 10
-    expr       go to state 6
-    number     go to state 7
+    $default  reduce using rule 12 (lit)
 
 
 State 5
+
+   16 str: LIT_STR .
+
+    $default  reduce using rule 16 (str)
+
+
+State 6
+
+   13 lit: TRUE .
+
+    $default  reduce using rule 13 (lit)
+
+
+State 7
+
+   14 lit: FALSE .
+
+    $default  reduce using rule 14 (lit)
+
+
+State 8
+
+    8 ident: IDENT .
+
+    $default  reduce using rule 8 (ident)
+
+
+State 9
+
+    4 statement: OP_PRINT . lit
+
+    LIT_BYTE     shift, and go to state 1
+    LIT_CHAR     shift, and go to state 2
+    LIT_INTEGER  shift, and go to state 3
+    LIT_FLOAT    shift, and go to state 4
+    LIT_STR      shift, and go to state 5
+    TRUE         shift, and go to state 6
+    FALSE        shift, and go to state 7
+
+    lit  go to state 16
+    str  go to state 15
+
+
+State 10
+
+    0 $accept: program . $end
+    2 program: program . statement
+
+    $end         shift, and go to state 17
+    LIT_BYTE     shift, and go to state 1
+    LIT_CHAR     shift, and go to state 2
+    LIT_INTEGER  shift, and go to state 3
+    LIT_FLOAT    shift, and go to state 4
+    LIT_STR      shift, and go to state 5
+    TRUE         shift, and go to state 6
+    FALSE        shift, and go to state 7
+    IDENT        shift, and go to state 8
+    OP_PRINT     shift, and go to state 9
+
+    statement  go to state 18
+    expr       go to state 12
+    ident      go to state 13
+    lit        go to state 14
+    str        go to state 15
+
+
+State 11
 
     1 program: statement .
 
     $default  reduce using rule 1 (program)
 
 
-State 6
+State 12
 
-    3 statement: expr . CH_NL
-    6 expr: expr . OP_ADD expr
-    7     | expr . OP_SUB expr
-    8     | expr . OP_MUL expr
-    9     | expr . OP_DIV expr
+    3 statement: expr .
 
-    CH_NL   shift, and go to state 11
-    OP_ADD  shift, and go to state 12
-    OP_SUB  shift, and go to state 13
-    OP_MUL  shift, and go to state 14
-    OP_DIV  shift, and go to state 15
+    $default  reduce using rule 3 (statement)
 
 
-State 7
+State 13
 
-    4 expr: number .
+    6 expr: ident .
+    7     | ident . OP_BIND expr
 
-    $default  reduce using rule 4 (expr)
+    OP_BIND  shift, and go to state 19
 
-
-State 8
-
-    5 expr: "(" expr . ")"
-    6     | expr . OP_ADD expr
-    7     | expr . OP_SUB expr
-    8     | expr . OP_MUL expr
-    9     | expr . OP_DIV expr
-
-    OP_ADD  shift, and go to state 12
-    OP_SUB  shift, and go to state 13
-    OP_MUL  shift, and go to state 14
-    OP_DIV  shift, and go to state 15
-    ")"     shift, and go to state 16
+    $default  reduce using rule 6 (expr)
 
 
-State 9
+State 14
+
+    5 expr: lit .
+
+    $default  reduce using rule 5 (expr)
+
+
+State 15
+
+   15 lit: str .
+
+    $default  reduce using rule 15 (lit)
+
+
+State 16
+
+    4 statement: OP_PRINT lit .
+
+    $default  reduce using rule 4 (statement)
+
+
+State 17
 
     0 $accept: program $end .
 
     $default  accept
 
 
-State 10
+State 18
 
     2 program: program statement .
 
     $default  reduce using rule 2 (program)
 
 
-State 11
-
-    3 statement: expr CH_NL .
-
-    $default  reduce using rule 3 (statement)
-
-
-State 12
-
-    6 expr: expr OP_ADD . expr
-
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
-
-    expr    go to state 17
-    number  go to state 7
-
-
-State 13
-
-    7 expr: expr OP_SUB . expr
-
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
-
-    expr    go to state 18
-    number  go to state 7
-
-
-State 14
-
-    8 expr: expr OP_MUL . expr
-
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
-
-    expr    go to state 19
-    number  go to state 7
-
-
-State 15
-
-    9 expr: expr OP_DIV . expr
-
-    INTEGER  shift, and go to state 1
-    DOUBLE   shift, and go to state 2
-    "("      shift, and go to state 3
-
-    expr    go to state 20
-    number  go to state 7
-
-
-State 16
-
-    5 expr: "(" expr ")" .
-
-    $default  reduce using rule 5 (expr)
-
-
-State 17
-
-    6 expr: expr . OP_ADD expr
-    6     | expr OP_ADD expr .
-    7     | expr . OP_SUB expr
-    8     | expr . OP_MUL expr
-    9     | expr . OP_DIV expr
-
-    OP_MUL  shift, and go to state 14
-    OP_DIV  shift, and go to state 15
-
-    $default  reduce using rule 6 (expr)
-
-
-State 18
-
-    6 expr: expr . OP_ADD expr
-    7     | expr . OP_SUB expr
-    7     | expr OP_SUB expr .
-    8     | expr . OP_MUL expr
-    9     | expr . OP_DIV expr
-
-    OP_MUL  shift, and go to state 14
-    OP_DIV  shift, and go to state 15
-
-    $default  reduce using rule 7 (expr)
-
-
 State 19
 
-    6 expr: expr . OP_ADD expr
-    7     | expr . OP_SUB expr
-    8     | expr . OP_MUL expr
-    8     | expr OP_MUL expr .
-    9     | expr . OP_DIV expr
+    7 expr: ident OP_BIND . expr
 
-    $default  reduce using rule 8 (expr)
+    LIT_BYTE     shift, and go to state 1
+    LIT_CHAR     shift, and go to state 2
+    LIT_INTEGER  shift, and go to state 3
+    LIT_FLOAT    shift, and go to state 4
+    LIT_STR      shift, and go to state 5
+    TRUE         shift, and go to state 6
+    FALSE        shift, and go to state 7
+    IDENT        shift, and go to state 8
+
+    expr   go to state 20
+    ident  go to state 13
+    lit    go to state 14
+    str    go to state 15
 
 
 State 20
 
-    6 expr: expr . OP_ADD expr
-    7     | expr . OP_SUB expr
-    8     | expr . OP_MUL expr
-    9     | expr . OP_DIV expr
-    9     | expr OP_DIV expr .
+    7 expr: ident OP_BIND expr .
 
-    $default  reduce using rule 9 (expr)
+    $default  reduce using rule 7 (expr)
