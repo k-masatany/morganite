@@ -47,33 +47,50 @@ extern int yydebug;
   {
     INTEGER = 258,
     DOUBLE = 259,
-    CH_NL = 260,
-    OP_ADD = 261,
-    OP_SUB = 262,
-    OP_MUL = 263,
-    OP_DIV = 264
+    BOOLEAN = 260,
+    newline = 261,
+    op_add = 262,
+    op_sub = 263,
+    op_mul = 264,
+    op_div = 265,
+    op_not = 266,
+    op_and = 267,
+    op_or = 268,
+    op_nand = 269,
+    op_nor = 270,
+    op_xor = 271,
+    op_bond = 272
   };
 #endif
 /* Tokens.  */
 #define INTEGER 258
 #define DOUBLE 259
-#define CH_NL 260
-#define OP_ADD 261
-#define OP_SUB 262
-#define OP_MUL 263
-#define OP_DIV 264
+#define BOOLEAN 260
+#define newline 261
+#define op_add 262
+#define op_sub 263
+#define op_mul 264
+#define op_div 265
+#define op_not 266
+#define op_and 267
+#define op_or 268
+#define op_nand 269
+#define op_nor 270
+#define op_xor 271
+#define op_bond 272
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
 union YYSTYPE
 {
-#line 17 "parse.y" /* yacc.c:1909  */
+#line 18 "parse.y" /* yacc.c:1909  */
 
     int     int_value;
     double  double_value;
+	bool	boolean_value;
 
-#line 77 "y.tab.h" /* yacc.c:1909  */
+#line 94 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -4,6 +4,8 @@
 ** See Copyright Notice in LICENSE file.
 */
 %{
+#include <string.h>
+#include <stdbool.h>
 #include "y.tab.h"
 
 int yywrap(void)
@@ -14,15 +16,19 @@ int yywrap(void)
 
 %%
 
-"+"     return OP_ADD;
-"tasu"  return OP_ADD;
-"-"     return OP_SUB;
-"hiku"  return OP_SUB;
-"*"     return OP_MUL;
-"kake"  return OP_MUL;
-"/"     return OP_DIV;
-"waru"  return OP_DIV;
-"\n"    return CH_NL;
+"+"     return op_add;
+"-"     return op_sub;
+"*"     return op_mul;
+"/"     return op_div;
+"="		return op_bond;
+"and"	return op_and;
+"or"	return op_or;
+"!"		return op_not;
+"not"	return op_not;
+"nand"	return op_nand;
+"nor"	return op_nor;
+"xor"	return op_xor;
+"\n"    return newline;
 
 ([1-9][0-9]*|[0-9]) {
     int temp;
@@ -38,6 +44,15 @@ int yywrap(void)
     return DOUBLE;
 };
 
+(true|True|TRUE) {
+    yylval.boolean_value = true;
+    return BOOLEAN;
+};
+
+(false|False|FALSE) {
+    yylval.boolean_value = false;
+    return BOOLEAN;
+};
 
 [ \t] ;
 
